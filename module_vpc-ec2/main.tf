@@ -1,11 +1,13 @@
 provider "aws" {
     region = "ap-south-1"
-  
+    # region where to create the infrastructure
 }
 
 resource "aws_vpc" "assignment_vpc" {
     
-    cidr_block = var.cidr_block_value
+    # resource vpc creation with ip range value given through variable var.cidr_block_value
+
+    cidr_block = var.cidr_block_value  
     
     tags = {
         Name = "assignment_vpc"
@@ -14,6 +16,8 @@ resource "aws_vpc" "assignment_vpc" {
 }
 resource "aws_internet_gateway" "assignment-igw" {
 
+    # creation of internet gateway for vpc
+
     vpc_id = aws_vpc.assignment_vpc.id
      tags = {
         Name = "assignment_igw"
@@ -21,6 +25,8 @@ resource "aws_internet_gateway" "assignment-igw" {
   
 }
 resource "aws_subnet" "public_subnet" {
+
+    # creation of public subnet
 
     vpc_id = aws_vpc.assignment_vpc.id
     cidr_block = "10.0.1.0/24"
@@ -33,6 +39,8 @@ resource "aws_subnet" "public_subnet" {
 }
 resource "aws_subnet" "private_subnet" {
     
+    # creation of private subnet
+
     vpc_id = aws_vpc.assignment_vpc.id
     cidr_block = "10.0.2.0/24"
     availability_zone = "ap-south-1b"
@@ -43,6 +51,8 @@ resource "aws_subnet" "private_subnet" {
 
 }
 resource "aws_route_table" "assignment-rt" {
+
+    # creation of routetable 
 
     vpc_id = aws_vpc.assignment_vpc.id
 
@@ -56,12 +66,18 @@ resource "aws_route_table" "assignment-rt" {
     }
   
 }
+
 resource "aws_route_table_association" "assignment-rt" {
+
+    # route subnet association for public subnet
+
     route_table_id = aws_route_table.assignment-rt.id
     subnet_id = aws_subnet.public_subnet.id
   
 }
 resource "aws_security_group" "assignment-sg" {
+
+    # creation of security group with inbound and outbound rules
 
     vpc_id = aws_vpc.assignment_vpc.id
     
@@ -85,6 +101,8 @@ resource "aws_security_group" "assignment-sg" {
   
 }
 resource "aws_instance" "assignment" {
+
+    # ec2 instance creation with values provided through variables
 
     ami = var.ami_value
     instance_type = var.instance_type_value
